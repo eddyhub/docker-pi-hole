@@ -68,6 +68,39 @@ setup_dnsmasq_dns() {
     fi
 }
 
+setup_dnsmasq_dhcp() {
+    local firstByte=$(echo $serverIP | cut -f 1 -d '.')
+    local secondByte=$(echo $serverIP | cut -f 2 -d '.')
+    local thirdByte=$(echo $serverIP | cut -f 3 -d '.')
+    local fourthByte=$(echo $serverIP | cut -f 4 -d '.')
+    local DHCP_ACTIVE="${1:-false}"
+    local DHCP_START="${2:-$firstByte.$secondByte.$thirdByte.201}"
+    local DHCP_END="${3:-$firstByte.$secondByte.$thirdByte.251}"
+    local DHCP_ROUTER="${4:-$firstByte.$secondByte.$thirdByte.1}"
+    local DHCP_LEASETIME="${5:-24}"
+    local PIHOLE_DOMAIN="${6:-lan}"
+    local DHCP_IPv6="${7:-false}"
+
+    if [[ "$DHCP_ACTIVE" = 'true' ]] && \
+       [[ -n "$DHCP_START" ]] && \
+       [[ -n "$DHCP_END" ]] && \
+       [[ -n "$DHCP_ROUTER" ]] && \
+       [[ -n "$DHCP_LEASETIME" ]] && \
+       [[ -n "$PIHOLE_DOMAIN" ]] && \
+       [[ -n "$DHCP_IPv6" ]]; then
+        change_setting "DHCP_ACTIVE" "${DHCP_ACTIVE}"
+        change_setting "DHCP_START" "${DHCP_START}"
+        change_setting "DHCP_END" "${DHCP_END}"
+        change_setting "DHCP_ROUTER" "${DHCP_ROUTER}"
+        change_setting "DHCP_LEASETIME" "${DHCP_LEASETIME}"
+        change_setting "PIHOLE_DOMAIN" "${PIHOLE_DOMAIN}"
+        change_setting "DHCP_IPv6" "${DHCP_IPv6}"
+    else
+        echo "DHCP settings incomplete or not used."
+        return
+    fi;
+}
+
 setup_dnsmasq_interface() {
     local INTERFACE="${1:-eth0}"
     local interfaceType='default'
@@ -90,6 +123,7 @@ setup_dnsmasq() {
     setup_dnsmasq_config_if_missing
     setup_dnsmasq_dns "$DNS1" "$DNS2" 
     setup_dnsmasq_interface "$INTERFACE"
+    setup_dnsmasq_dhcp "$DHCP_ACTIVE" "$DHCP_START" "$DHCP_END" "$DHCP_ROUTER" "$DHCP_LEASETIME" "$PIHOLE_DOMAIN" "$DHCP_IPv6"
     ProcessDNSSettings
     # dnsmasq -7 /etc/dnsmasq.d --interface="${INTERFACE:-eth0}"
 }

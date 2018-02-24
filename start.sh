@@ -14,6 +14,13 @@ export INTERFACE
 export IPv6
 export WEBPASSWORD
 export WEB_PORT
+export DHCP_ACTIVE
+export DHCP_START
+export DHCP_END
+export DHCP_ROUTER
+export DHCP_LEASETIME
+export PIHOLE_DOMAIN
+export DHCP_IPv6
 
 . /bash_functions.sh
 
@@ -24,7 +31,7 @@ change_setting "IPV4_ADDRESS" "$ServerIP"
 change_setting "IPV6_ADDRESS" "$ServerIPv6"
 setup_web_port "$WEB_PORT"
 setup_web_password "$WEBPASSWORD"
-setup_dnsmasq "$DNS1" "$DNS2"
+setup_dnsmasq "$DNS1" "$DNS2" "$DHCP_ACTIVE" "$DHCP_START" "$DHCP_END" "$DHCP_ROUTER" "$DHCP_LEASETIME" "$PIHOLE_DOMAIN" "$DHCP_IPv6"
 setup_php_env
 setup_dnsmasq_hostnames "$ServerIP" "$ServerIPv6" "$HOSTNAME"
 setup_ipv4_ipv6
