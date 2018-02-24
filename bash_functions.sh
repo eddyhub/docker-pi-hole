@@ -96,6 +96,7 @@ setup_dnsmasq_dhcp() {
         change_setting "PIHOLE_DOMAIN" "${PIHOLE_DOMAIN}"
         change_setting "DHCP_IPv6" "${DHCP_IPv6}"
     else
+        change_setting "DHCP_ACTIVE" 'false'
         echo "DHCP settings incomplete or not used."
         return
     fi;
